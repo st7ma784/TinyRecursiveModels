@@ -1,0 +1,24 @@
+2025-10-17 21:41:20,270 INFO    MainThread:2591555 [wandb_setup.py:_flush():81] Current SDK version is 0.22.2
+2025-10-17 21:41:20,270 INFO    MainThread:2591555 [wandb_setup.py:_flush():81] Configure stats pid to 2591555
+2025-10-17 21:41:20,270 INFO    MainThread:2591555 [wandb_setup.py:_flush():81] Loading settings from /home/user/.config/wandb/settings
+2025-10-17 21:41:20,270 INFO    MainThread:2591555 [wandb_setup.py:_flush():81] Loading settings from /data/TinyRecursiveModels/wandb/settings
+2025-10-17 21:41:20,270 INFO    MainThread:2591555 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2025-10-17 21:41:20,270 INFO    MainThread:2591555 [wandb_init.py:setup_run_log_directory():705] Logging user logs to /data/TinyRecursiveModels/wandb/run-20251017_214120-8yl3tnpa/logs/debug.log
+2025-10-17 21:41:20,270 INFO    MainThread:2591555 [wandb_init.py:setup_run_log_directory():706] Logging internal logs to /data/TinyRecursiveModels/wandb/run-20251017_214120-8yl3tnpa/logs/debug-internal.log
+2025-10-17 21:41:20,270 INFO    MainThread:2591555 [wandb_init.py:init():832] calling init triggers
+2025-10-17 21:41:20,270 INFO    MainThread:2591555 [wandb_init.py:init():837] wandb.init called with sweep_config: {}
+config: {'arch': {'name': 'recursive_reasoning.trm@TinyRecursiveReasoningModel_ACTV1', 'loss': {'name': 'losses@ACTLossHead', 'loss_type': 'stablemax_cross_entropy'}, 'halt_exploration_prob': 0.1, 'halt_max_steps': 16, 'H_cycles': 3, 'L_cycles': 6, 'H_layers': 0, 'L_layers': 2, 'hidden_size': 512, 'num_heads': 8, 'expansion': 4, 'puzzle_emb_ndim': 512, 'pos_encodings': 'rope', 'forward_dtype': 'bfloat16', 'mlp_t': False, 'puzzle_emb_len': 16, 'no_ACT_continue': True}, 'data_paths': ['data/lsa-9x9-10k'], 'data_paths_test': [], 'evaluators': [{'name': 'lsa@LSA'}], 'global_batch_size': 128, 'epochs': 50000, 'lr': 0.0001, 'lr_min_ratio': 1.0, 'lr_warmup_steps': 2000, 'weight_decay': 1.0, 'beta1': 0.9, 'beta2': 0.95, 'puzzle_emb_lr': 0.0001, 'puzzle_emb_weight_decay': 1.0, 'project_name': 'Lsa-9x9-10k-ACT-torch', 'run_name': 'pretrain_lsa_9x9_trm', 'load_checkpoint': None, 'checkpoint_path': 'checkpoints/Lsa-9x9-10k-ACT-torch/pretrain_lsa_9x9_trm', 'seed': 0, 'checkpoint_every_eval': True, 'eval_interval': 5000, 'min_eval_interval': 0, 'eval_save_outputs': [], 'ema': True, 'ema_rate': 0.999, 'freeze_weights': False, '_wandb': {'code_path': 'code/pretrain.py'}}
+2025-10-17 21:41:20,270 INFO    MainThread:2591555 [wandb_init.py:init():880] starting backend
+2025-10-17 21:41:20,477 INFO    MainThread:2591555 [wandb_init.py:init():883] sending inform_init request
+2025-10-17 21:41:20,483 INFO    MainThread:2591555 [wandb_init.py:init():891] backend started and connected
+2025-10-17 21:41:20,486 INFO    MainThread:2591555 [wandb_init.py:init():961] updated telemetry
+2025-10-17 21:41:20,493 INFO    MainThread:2591555 [wandb_init.py:init():985] communicating run to backend with 90.0 second timeout
+2025-10-17 21:41:20,947 INFO    MainThread:2591555 [wandb_init.py:init():1036] starting run threads in backend
+2025-10-17 21:41:21,324 INFO    MainThread:2591555 [wandb_run.py:_console_start():2509] atexit reg
+2025-10-17 21:41:21,324 INFO    MainThread:2591555 [wandb_run.py:_redirect():2357] redirect: wrap_raw
+2025-10-17 21:41:21,324 INFO    MainThread:2591555 [wandb_run.py:_redirect():2426] Wrapping output streams.
+2025-10-17 21:41:21,324 INFO    MainThread:2591555 [wandb_run.py:_redirect():2449] Redirects installed.
+2025-10-17 21:41:21,327 INFO    MainThread:2591555 [wandb_init.py:init():1076] run started, returning control to user process
+2025-10-17 21:41:22,192 INFO    MainThread:2591555 [wandb_run.py:_config_callback():1392] config_cb None None {'_wandb': {'code_path': 'source-Lsa-9x9-10k-ACT-torch-pretrain.py'}}
+2025-10-17 21:43:33,997 INFO    wandb-AsyncioManager-main:2591555 [service_client.py:_forward_responses():80] Reached EOF.
+2025-10-17 21:43:33,997 INFO    wandb-AsyncioManager-main:2591555 [mailbox.py:close():137] Closing mailbox, abandoning 1 handles.

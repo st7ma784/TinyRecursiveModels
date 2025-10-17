@@ -1,0 +1,128 @@
+_wandb:
+    value:
+        cli_version: 0.22.2
+        code_path: source-Lsa-9x9-10k-ACT-torch-pretrain.py
+        e:
+            plsamos2zm6prlllixshiy9wjqwh1pqk:
+                args:
+                    - --config-name
+                    - cfg_lsa
+                    - arch=trm
+                    - data_paths=[data/lsa-9x9-10k]
+                    - 'evaluators=[{name: lsa@LSA}]'
+                    - epochs=50000
+                    - eval_interval=5000
+                    - global_batch_size=128
+                    - lr=1e-4
+                    - puzzle_emb_lr=1e-4
+                    - weight_decay=1.0
+                    - puzzle_emb_weight_decay=1.0
+                    - arch.L_layers=2
+                    - arch.H_cycles=3
+                    - arch.L_cycles=6
+                    - +run_name=pretrain_lsa_9x9_trm
+                    - ema=True
+                codePath: pretrain.py
+                codePathLocal: pretrain.py
+                email: s.mander3@lancaster.ac.uk
+                executable: /home/user/miniconda3/envs/open-ce/bin/python
+                git:
+                    commit: e7b68717f0a6c4cbb4ce6fbef787b14f42083bd9
+                    remote: https://github.com/st7ma784/TinyRecursiveModels.git
+                host: scc-ws-02
+                os: Linux-6.8.0-79-generic-x86_64-with-glibc2.39
+                program: /data/TinyRecursiveModels/pretrain.py
+                python: CPython 3.13.3
+                root: /data/TinyRecursiveModels
+                startedAt: "2025-10-17T21:41:20.268489Z"
+                writerId: plsamos2zm6prlllixshiy9wjqwh1pqk
+        m: []
+        python_version: 3.13.3
+        t:
+            "1":
+                - 1
+                - 50
+            "2":
+                - 1
+                - 50
+            "3":
+                - 13
+                - 16
+                - 61
+            "4": 3.13.3
+            "5": 0.22.2
+            "12": 0.22.2
+            "13": linux-x86_64
+arch:
+    value:
+        H_cycles: 3
+        H_layers: 0
+        L_cycles: 6
+        L_layers: 2
+        expansion: 4
+        forward_dtype: bfloat16
+        halt_exploration_prob: 0.1
+        halt_max_steps: 16
+        hidden_size: 512
+        loss:
+            loss_type: stablemax_cross_entropy
+            name: losses@ACTLossHead
+        mlp_t: false
+        name: recursive_reasoning.trm@TinyRecursiveReasoningModel_ACTV1
+        no_ACT_continue: true
+        num_heads: 8
+        pos_encodings: rope
+        puzzle_emb_len: 16
+        puzzle_emb_ndim: 512
+beta1:
+    value: 0.9
+beta2:
+    value: 0.95
+checkpoint_every_eval:
+    value: true
+checkpoint_path:
+    value: checkpoints/Lsa-9x9-10k-ACT-torch/pretrain_lsa_9x9_trm
+data_paths:
+    value:
+        - data/lsa-9x9-10k
+data_paths_test:
+    value: []
+ema:
+    value: true
+ema_rate:
+    value: 0.999
+epochs:
+    value: 50000
+eval_interval:
+    value: 5000
+eval_save_outputs:
+    value: []
+evaluators:
+    value:
+        - name: lsa@LSA
+freeze_weights:
+    value: false
+global_batch_size:
+    value: 128
+load_checkpoint:
+    value: null
+lr:
+    value: 0.0001
+lr_min_ratio:
+    value: 1
+lr_warmup_steps:
+    value: 2000
+min_eval_interval:
+    value: 0
+project_name:
+    value: Lsa-9x9-10k-ACT-torch
+puzzle_emb_lr:
+    value: 0.0001
+puzzle_emb_weight_decay:
+    value: 1
+run_name:
+    value: pretrain_lsa_9x9_trm
+seed:
+    value: 0
+weight_decay:
+    value: 1

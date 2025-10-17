@@ -17,7 +17,13 @@ import coolname
 import hydra
 import pydantic
 from omegaconf import DictConfig
-from adam_atan2 import AdamATan2
+
+try:
+    from adam_atan2 import AdamATan2
+    USE_ADAM_ATAN2 = True
+except ImportError:
+    print("Warning: adam_atan2 not available, falling back to torch.optim.Adam")
+    USE_ADAM_ATAN2 = False
 
 from puzzle_dataset import PuzzleDataset, PuzzleDatasetConfig, PuzzleDatasetMetadata
 from utils.functions import load_model_class, get_model_source_path
@@ -146,14 +152,24 @@ def create_model(config: PretrainConfig, train_metadata: PuzzleDatasetMetadata, 
 
     # Optimizers and lr
     if config.arch.puzzle_emb_ndim == 0:
-        optimizers = [
-            AdamATan2(
-                model.parameters(),
-                lr=0,  # Needs to be set by scheduler
-                weight_decay=config.weight_decay,
-                betas=(config.beta1, config.beta2)
-            )
-        ]
+        if USE_ADAM_ATAN2:
+            optimizers = [
+                AdamATan2(
+                    model.parameters(),
+                    lr=0,  # Needs to be set by scheduler
+                    weight_decay=config.weight_decay,
+                    betas=(config.beta1, config.beta2)
+                )
+            ]
+        else:
+            optimizers = [
+                torch.optim.Adam(
+                    model.parameters(),
+                    lr=0,  # Needs to be set by scheduler
+                    weight_decay=config.weight_decay,
+                    betas=(config.beta1, config.beta2)
+                )
+            ]
         optimizer_lrs = [
             config.lr
         ]
@@ -170,6 +186,21 @@ def create_model(config: PretrainConfig, train_metadata: PuzzleDatasetMetadata, 
             config.puzzle_emb_lr
         ]
     else:
+        if USE_ADAM_ATAN2:
+            adam_opt = AdamATan2(
+                model.parameters(),
+                lr=0,  # Needs to be set by scheduler
+                weight_decay=config.weight_decay,
+                betas=(config.beta1, config.beta2)
+            )
+        else:
+            adam_opt = torch.optim.Adam(
+                model.parameters(),
+                lr=0,  # Needs to be set by scheduler
+                weight_decay=config.weight_decay,
+                betas=(config.beta1, config.beta2)
+            )
+        
         optimizers = [
             CastedSparseEmbeddingSignSGD_Distributed(
                 model.model.puzzle_emb.buffers(),  # type: ignore
@@ -177,12 +208,7 @@ def create_model(config: PretrainConfig, train_metadata: PuzzleDatasetMetadata, 
                 weight_decay=config.puzzle_emb_weight_decay,
                 world_size=world_size
             ),
-            AdamATan2(
-                model.parameters(),
-                lr=0,  # Needs to be set by scheduler
-                weight_decay=config.weight_decay,
-                betas=(config.beta1, config.beta2)
-            )
+            adam_opt
         ]
         optimizer_lrs = [
             config.puzzle_emb_lr,

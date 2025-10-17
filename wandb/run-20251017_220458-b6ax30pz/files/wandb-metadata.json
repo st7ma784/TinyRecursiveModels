@@ -1,0 +1,36 @@
+{
+  "os": "Linux-6.8.0-79-generic-x86_64-with-glibc2.39",
+  "python": "CPython 3.13.3",
+  "startedAt": "2025-10-17T22:04:58.823104Z",
+  "args": [
+    "--config-name",
+    "cfg_lsa",
+    "arch=trm",
+    "data_paths=[data/lsa-9x9-10k]",
+    "evaluators=[{name: lsa@LSA}]",
+    "epochs=50000",
+    "eval_interval=5000",
+    "global_batch_size=128",
+    "lr=1e-4",
+    "puzzle_emb_lr=1e-4",
+    "weight_decay=1.0",
+    "puzzle_emb_weight_decay=1.0",
+    "arch.L_layers=2",
+    "arch.H_cycles=3",
+    "arch.L_cycles=6",
+    "+run_name=pretrain_lsa_9x9_trm",
+    "ema=True"
+  ],
+  "program": "/data/TinyRecursiveModels/pretrain.py",
+  "codePath": "pretrain.py",
+  "codePathLocal": "pretrain.py",
+  "git": {
+    "remote": "https://github.com/st7ma784/TinyRecursiveModels.git",
+    "commit": "e7b68717f0a6c4cbb4ce6fbef787b14f42083bd9"
+  },
+  "email": "s.mander3@lancaster.ac.uk",
+  "root": "/data/TinyRecursiveModels",
+  "host": "scc-ws-02",
+  "executable": "/home/user/miniconda3/envs/open-ce/bin/python",
+  "writerId": "hvz7bg5qxi96poxudenv4rnk8k7ycqln"
+}

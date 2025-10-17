@@ -1,0 +1,9 @@
+Starting LSA training on GPU 0
+Run name: pretrain_lsa_9x9_trm
+Dataset: data/lsa-9x9-10k
+Note: Torch compilation disabled for GPU compatibility (P100)
+
+Traceback (most recent call last):
+  File "/data/TinyRecursiveModels/pretrain.py", line 16, in <module>
+    import coolname
+ModuleNotFoundError: No module named 'coolname'
