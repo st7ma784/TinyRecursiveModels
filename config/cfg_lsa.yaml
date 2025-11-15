@@ -4,6 +4,19 @@ defaults:
   - arch: trm
   - _self_
 
+# Override loss settings for LSA
+arch:
+  loss:
+    task_type: lsa  # Enable cost-based correctness for LSA
+    matrix_size: 9  # 9x9 assignment matrix
+
+  # Enable sinusoidal embeddings for continuous cost values
+  use_sinusoidal_value_embedding: True
+  value_embedding_max: 100.0  # Match dataset max_value
+  value_embedding_min: 0.0
+  value_embedding_type: "hybrid"  # Hybrid of sinusoidal + learnable
+  hybrid_sinusoidal_ratio: 0.5  # 50/50 split
+
 hydra:
   output_subdir: null
 

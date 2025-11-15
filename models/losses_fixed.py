@@ -207,12 +207,12 @@ class ACTLossHead(nn.Module):
                 # Use exact token matching (original behavior)
                 seq_is_correct = is_correct.sum(-1) == loss_counts
             # ===== END MODIFICATION =====
-            
+
             # Metrics (halted)
             valid_metrics = new_carry.halted & (loss_counts > 0)
             metrics = {
                 "count": valid_metrics.sum(),
-                
+
                 "accuracy":       torch.where(valid_metrics, (is_correct.to(torch.float32) / loss_divisor).sum(-1), 0).sum(),
                 "exact_accuracy": (valid_metrics & seq_is_correct).sum(),
 
@@ -238,4 +238,3 @@ class ACTLossHead(nn.Module):
         detached_outputs = {k: outputs[k].detach() for k in return_keys if k in outputs}
 
         return new_carry, lm_loss + 0.5 * (q_halt_loss + q_continue_loss), metrics, detached_outputs, new_carry.halted.all()
-

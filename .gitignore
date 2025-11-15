@@ -1,1 +1,6 @@
 wandb/
+checkpoints/
+outputs/
+wandb/*
+models/__pycache_/
+wandb/**

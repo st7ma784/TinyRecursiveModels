@@ -10,6 +10,7 @@ import random
 from models.common import trunc_normal_init_
 from models.layers import rms_norm, LinearSwish, SwiGLU, Attention, RotaryEmbedding, CosSin, CastedEmbedding, CastedLinear
 from models.sparse_embedding import CastedSparseEmbedding
+from models.value_embedding import SinusoidalValueEmbedding, HybridValueEmbedding, ContinuousValueEmbedding
 
 IGNORE_LABEL_ID = -100
 
@@ -50,7 +51,7 @@ class TinyRecursiveReasoningModel_ACTV1Config(BaseModel):
 
     rms_norm_eps: float = 1e-5
     rope_theta: float = 10000.0
-    
+
     # Halting Q-learning config
     halt_max_steps: int
     halt_exploration_prob: float
@@ -61,6 +62,13 @@ class TinyRecursiveReasoningModel_ACTV1Config(BaseModel):
     mlp_t: bool = False # use mlp on L instead of transformer
     puzzle_emb_len: int = 16 # if non-zero, its specified to this value
     no_ACT_continue: bool =  True # No continue ACT loss, only use the sigmoid of the halt which makes much more sense
+
+    # Value embedding config (for continuous/ordinal inputs like LSA)
+    use_sinusoidal_value_embedding: bool = False
+    value_embedding_max: float = 100.0  # Max value for normalization
+    value_embedding_min: float = 0.0    # Min value for normalization
+    value_embedding_type: str = "hybrid"  # "sinusoidal", "hybrid", or "discrete"
+    hybrid_sinusoidal_ratio: float = 0.5  # Ratio of sinusoidal vs learned in hybrid mode
 
 class TinyRecursiveReasoningModel_ACTV1Block(nn.Module):
     def __init__(self, config: TinyRecursiveReasoningModel_ACTV1Config) -> None:
@@ -126,7 +134,35 @@ class TinyRecursiveReasoningModel_ACTV1_Inner(nn.Module):
         self.embed_scale = math.sqrt(self.config.hidden_size)
         embed_init_std = 1.0 / self.embed_scale
 
-        self.embed_tokens = CastedEmbedding(self.config.vocab_size, self.config.hidden_size, init_std=embed_init_std, cast_to=self.forward_dtype)
+        # Choose embedding type based on config
+        if self.config.use_sinusoidal_value_embedding:
+            if self.config.value_embedding_type == "sinusoidal":
+                # Pure sinusoidal embedding
+                self.embed_tokens = ContinuousValueEmbedding(
+                    num_embeddings=self.config.vocab_size,
+                    embedding_dim=self.config.hidden_size,
+                    init_std=embed_init_std,
+                    cast_to=self.forward_dtype,
+                    max_value=self.config.value_embedding_max,
+                    min_value=self.config.value_embedding_min
+                )
+            elif self.config.value_embedding_type == "hybrid":
+                # Hybrid: sinusoidal + learnable
+                self.embed_tokens = HybridValueEmbedding(
+                    num_embeddings=self.config.vocab_size,
+                    embedding_dim=self.config.hidden_size,
+                    max_value=self.config.value_embedding_max,
+                    min_value=self.config.value_embedding_min,
+                    sinusoidal_ratio=self.config.hybrid_sinusoidal_ratio,
+                    init_std=embed_init_std,
+                    cast_to=self.forward_dtype
+                )
+            else:
+                raise ValueError(f"Unknown value_embedding_type: {self.config.value_embedding_type}")
+        else:
+            # Standard discrete embedding
+            self.embed_tokens = CastedEmbedding(self.config.vocab_size, self.config.hidden_size, init_std=embed_init_std, cast_to=self.forward_dtype)
+
         self.lm_head      = CastedLinear(self.config.hidden_size, self.config.vocab_size, bias=False)
         self.q_head       = CastedLinear(self.config.hidden_size, 2, bias=True)
 

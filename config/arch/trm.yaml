@@ -2,6 +2,8 @@ name: recursive_reasoning.trm@TinyRecursiveReasoningModel_ACTV1
 loss:
   name: losses@ACTLossHead
   loss_type: stablemax_cross_entropy
+  task_type: null  # Set to 'lsa' for Linear Sum Assignment tasks
+  matrix_size: 9   # Size of assignment matrix for LSA tasks
 
 halt_exploration_prob: 0.1
 halt_max_steps: 16
@@ -24,3 +26,10 @@ forward_dtype: bfloat16
 mlp_t: False # use mlp on L instead of transformer
 puzzle_emb_len: 16 # if non-zero, its specified to this value
 no_ACT_continue: True # No continue ACT loss, only use the sigmoid of the halt which makes much more sense
+
+# Value embedding for continuous/ordinal inputs (e.g., LSA cost matrices)
+use_sinusoidal_value_embedding: False  # Enable for LSA
+value_embedding_max: 100.0  # Max cost value in LSA
+value_embedding_min: 0.0    # Min cost value
+value_embedding_type: "hybrid"  # "sinusoidal", "hybrid", or "discrete"
+hybrid_sinusoidal_ratio: 0.5  # Use 50% sinusoidal, 50% learnable

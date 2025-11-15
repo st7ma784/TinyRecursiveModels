@@ -20,7 +20,8 @@ class LSA:
     
     required_outputs = {"inputs", "labels", "preds"}
     
-    def __init__(self, 
+    def __init__(self,
+                 data_path: str,
                  eval_metadata: PuzzleDatasetMetadata,
                  matrix_size: int = 9):
         super().__init__()
@@ -77,14 +78,20 @@ class LSA:
         inputs = batch["inputs"].cpu().numpy()
         labels = batch["labels"].cpu().numpy()
         pred_labels = preds["preds"].cpu().numpy()
-        
+
         # Filter out padding if using puzzle_identifiers
+        # Note: Only filter if there are actual padded samples (not all blank_identifier_id)
         if "puzzle_identifiers" in batch:
-            mask = batch["puzzle_identifiers"].cpu().numpy() != self.blank_identifier_id
-            inputs = inputs[mask]
-            labels = labels[mask]
-            pred_labels = pred_labels[mask]
-        
+            puzzle_ids = batch["puzzle_identifiers"].cpu().numpy()
+            mask = puzzle_ids != self.blank_identifier_id
+
+            # Only apply filter if there's at least one valid sample
+            # (This handles the case where blank_identifier_id == 0 and all real puzzles also have id 0)
+            if mask.any():
+                inputs = inputs[mask]
+                labels = labels[mask]
+                pred_labels = pred_labels[mask]
+
         batch_size = len(inputs)
         self._local_metrics['total_samples'] += batch_size
         
@@ -115,18 +122,22 @@ class LSA:
                 # Track cost difference
                 self._local_metrics['cost_diff_sum'] += abs(pred_cost - true_cost)
     
-    def result(self, save_path: Optional[str], rank: int, world_size: int, 
+    def result(self, save_path: Optional[str], rank: int, world_size: int,
                group: Optional[torch.distributed.ProcessGroup] = None) -> Optional[Dict[str, float]]:
         """Aggregate results across all processes and compute final metrics."""
-        
+
         # Gather metrics from all ranks
-        all_metrics = [None for _ in range(world_size)] if rank == 0 else None
-        dist.gather_object(self._local_metrics, all_metrics, dst=0, group=group)
-        
+        if world_size > 1:
+            all_metrics = [None for _ in range(world_size)] if rank == 0 else None
+            dist.gather_object(self._local_metrics, all_metrics, dst=0, group=group)
+        else:
+            # Single GPU mode - no need to gather
+            all_metrics = [self._local_metrics]
+
         # Only rank 0 computes and returns final metrics
         if rank != 0:
             return None
-        
+
         # Aggregate metrics
         aggregated = {
             'total_samples': 0,
@@ -135,7 +146,7 @@ class LSA:
             'optimal_cost': 0,
             'cost_diff_sum': 0.0,
         }
-        
+
         for metrics in all_metrics:  # type: ignore
             for key in aggregated.keys():
                 aggregated[key] += metrics[key]
